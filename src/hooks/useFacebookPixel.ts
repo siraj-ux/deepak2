@@ -11,6 +11,7 @@ declare global {
 }
 
 const PIXEL_ID = "1953633955426093";
+const PIXEL_ID_2 = "2043693512875067";
 
 interface PixelOptions {
   eventName?: string;
@@ -22,6 +23,7 @@ export function useFacebookPixel({ eventName, eventParams }: PixelOptions = {}) 
     const ensureLoadedAndTrack = () => {
       if (!window.__fbqInitialized && window.fbq) {
         window.fbq("init", PIXEL_ID);
+        window.fbq("init", PIXEL_ID_2);
         window.fbq("track", "PageView");
         window.__fbqInitialized = true;
       }

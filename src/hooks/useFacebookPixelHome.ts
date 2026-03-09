@@ -2,12 +2,14 @@
 import { useEffect } from "react";
 
 const PIXEL_ID = "1953633955426093";
+const PIXEL_ID_2 = "2043693512875067";
 
 export function useFacebookPixel() {
   useEffect(() => {
     // if already loaded, just track and return
     if (window.fbq) {
       window.fbq("init", PIXEL_ID);
+      window.fbq("init", PIXEL_ID_2);
       window.fbq("track", "PageView");
       return;
     }
@@ -31,6 +33,7 @@ export function useFacebookPixel() {
     })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js", null, null, null);
 
     window.fbq!("init", PIXEL_ID);
+    window.fbq!("init", PIXEL_ID_2);
     window.fbq!("track", "PageView");
   }, []);
 }

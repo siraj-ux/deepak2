@@ -9,7 +9,16 @@ const ThankYou = () => {
 
 const fired = useRef(false);
 
-  useFacebookPixel();
+  // Track Purchase event
+  useFacebookPixel({
+    eventName: "Purchase",
+    eventParams: {
+      value: 99,
+      currency: "INR",
+      content_name: "Workshop Registration",
+      content_type: "product",
+    }
+  });
 
   useEffect(() => {
     fired.current = true; // prevent re-firing if the component re-renders

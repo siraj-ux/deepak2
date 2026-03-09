@@ -18,6 +18,18 @@ const DontJoinIf = () => {
     else window.location.hash = "#register";
   };
 
+  const handleCTAClick = () => {
+    // Track AddToCart event
+    if (window.fbq) {
+      window.fbq("track", "AddToCart", {
+        value: 99,
+        currency: "INR",
+        content_name: "Workshop Registration",
+        content_type: "product",
+      });
+    }
+    scrollToRegister();
+  };
 
   const prefersReducedMotion = useReducedMotion();
   const initial = prefersReducedMotion ? {} : { opacity: 0, y: 18 };
@@ -88,9 +100,7 @@ const DontJoinIf = () => {
           className="text-center space-y-3 sm:space-y-4 mt-8 sm:mt-10"
         >
           <Button
-            onClick={() => {
-  scrollToRegister();
-}}
+            onClick={handleCTAClick}
             className="h-12 sm:h-14 px-8 sm:px-12 text-base sm:text-lg font-montserrat font-bold
                        bg-gradient-to-r from-accent to-accent/80
                        hover:from-accent/90 hover:to-accent/70
