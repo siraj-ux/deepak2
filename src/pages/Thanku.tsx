@@ -1,15 +1,17 @@
 import { motion } from "framer-motion";
-import { useEffect , useRef } from "react";
+import { useRef } from "react";
 import { CheckCircle2, MessageCircle } from "lucide-react";
 import { useFacebookPixel } from "@/hooks/useFacebookPixel";
 
 const WA_GROUP_LINK = "http://join.digitalwealthdomination.in/dwd-whatsapp";
 
 const ThankYou = () => {
+  const fired = useRef(false);
 
-const fired = useRef(false);
+  // ✅ PageView (both pixels)
+  useFacebookPixel();
 
-  // Track Purchase event
+  // ✅ Purchase (ONLY one pixel)
   useFacebookPixel({
     eventName: "Purchase",
     eventParams: {
@@ -17,14 +19,10 @@ const fired = useRef(false);
       currency: "INR",
       content_name: "Workshop Registration",
       content_type: "product",
-    }
+    },
+    pixelId: "1953633955426093",
   });
 
-  useEffect(() => {
-    fired.current = true; // prevent re-firing if the component re-renders
-  }, []);
-
-  
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-to-b from-noir via-primary/80 to-noir px-4 py-16">
       <motion.div
@@ -45,12 +43,10 @@ const fired = useRef(false);
           </div>
         </motion.div>
 
-        {/* Title */}
         <h1 className="font-montserrat font-bold text-3xl sm:text-4xl text-white mb-3">
           Thank You For Registering!
         </h1>
 
-        {/* Subtext */}
         <p className="font-poppins text-base sm:text-lg text-white/90 leading-relaxed mb-6">
           <span className="text-red-400 font-semibold">
             Wait, your registration is incomplete...
@@ -63,7 +59,6 @@ const fired = useRef(false);
           .
         </p>
 
-        {/* WhatsApp CTA */}
         <motion.a
           href={WA_GROUP_LINK}
           target="_self"

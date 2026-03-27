@@ -165,8 +165,20 @@ const Hero = () => {
     if (submitting) return;
     setSubmitting(true);
 
-    // ✅ Trigger event AFTER submit (as requested)
+    // ✅ Logic to split Name for fn and ln (Last Name)
+    const nameParts = form.name.trim().split(/\s+/);
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
+
+    // ✅ Trigger event AFTER submit with Advanced Matching (em, ph, fn, ln)
     if (window.fbq) {
+      window.fbq('init', '1953633955426093', {
+        em: form.email.toLowerCase().trim(),
+        ph: form.phone.replace(/\D/g, ""), 
+        fn: firstName.toLowerCase().trim(),
+        ln: lastName.toLowerCase().trim() 
+      });
+
       window.fbq("track", "AddToCart", {
         value: 99,
         currency: "INR",
@@ -336,7 +348,7 @@ const Hero = () => {
                   </div>
                 </div>
 
-                {/* ✅ CTA now ONLY scrolls (no fbq here) */}
+                {/* ✅ CTA now ONLY scrolls */}
                 <div className="space-y-2 text-center">
                   <Button
                     onClick={scrollToRegister}
@@ -358,7 +370,7 @@ const Hero = () => {
                   Enrollment closes on <span className="text-accent font-semibold">today</span>
                 </p>
 
-                {/* ✅ FORM placed inside same card (below details) */}
+                {/* ✅ FORM */}
                 <div
                   id="register"
                   className="mt-4 rounded-2xl bg-secondary/5 border border-border p-4 sm:p-5"
