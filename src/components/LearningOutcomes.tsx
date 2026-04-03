@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Video, MessageCircle, FileText, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// 1. Import the SubscribeButton
+import SubscribeButton from "@/components/SubscribeButton";
 
 const outcomes = [
   { icon: Video, title: "Live Zoom Sessions", description: "This 2-day workshop is packed with in-depth training, technical demonstrations, and practical exercises.", value: "Worth Rs. 17,997" },
@@ -123,7 +124,7 @@ const LearningOutcomes = () => {
           </p>
         </motion.div>
 
-        {/* NEW: 2-Day Agenda – compact & responsive */}
+        {/* 2-Day Agenda */}
         <motion.div
           initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -198,21 +199,21 @@ const LearningOutcomes = () => {
           whileInView={animate}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center space-y-3 sm:space-y-4"
+          className="text-center space-y-3 sm:space-y-4 flex flex-col items-center"
         >
-          <Button
-            onClick={() => {
-              
-              scrollToRegister();
-            }}
+          {/* ✅ UPDATED: Replaced Button with SubscribeButton */}
+          <SubscribeButton
+            label="Join now for ₹99"
+            price="₹99"
+            ctaLocation="learning-outcomes-section"
+            href="#register"
+            onClick={scrollToRegister}
             className="h-12 sm:h-14 px-8 sm:px-12 text-base sm:text-lg font-montserrat font-bold
                        bg-gradient-to-r from-accent to-accent/80
                        hover:from-accent/90 hover:to-accent/70
                        text-white rounded-full shadow-lg hover:shadow-xl
-                       transition-all duration-300"
-          >
-            Join now for ₹99
-          </Button>
+                       transition-all duration-300 inline-flex items-center justify-center gap-2"
+          />
 
           <p className="font-poppins text-[13px] sm:text-sm font-bold text-accent">
             Claim FREE bonuses worth ₹29,997

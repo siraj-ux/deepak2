@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import SubscribeButton from "@/components/SubscribeButton";
 
 const workshopTopics = [
   { title: "Crypto Investing Essentials:", description: "Gain practical skills to start investing in crypto and begin your journey towards digital wealth." },
@@ -12,6 +12,11 @@ const workshopTopics = [
 ];
 
 const WorkshopContent = () => {
+  const scrollToRegister = () => {
+    const el = document.getElementById("register");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <section className="py-12 sm:py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -63,18 +68,14 @@ const WorkshopContent = () => {
           transition={{ duration: 0.6 }}
           className="text-center space-y-3 sm:space-y-4"
         >
-          <Button
-          onClick={() => {
-  window.open("https://rzp.io/rzp/yfk410Ud", "_self");
-}}
-            className="h-12 sm:h-14 px-8 sm:px-12 text-base sm:text-lg font-montserrat font-bold
-                       bg-gradient-to-r from-accent to-accent/80
-                       hover:from-accent/90 hover:to-accent/70
-                       text-white rounded-full shadow-lg hover:shadow-xl
-                       transition-all duration-300"
-          >
-            Join now for ₹99
-          </Button>
+          <SubscribeButton
+            label="Join now for"
+            price="₹99"
+            ctaLocation="workshop-content"
+            href="#register"
+            onClick={scrollToRegister}
+            className="h-12 sm:h-14 px-8 sm:px-12 text-base sm:text-lg font-montserrat font-bold bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center justify-center gap-2"
+          />
 
           {/* Bonus line outside the button (like Hero) */}
           <p className="font-poppins text-[13px] sm:text-sm font-bold text-accent">

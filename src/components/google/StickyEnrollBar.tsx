@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import SubscribeButton from "@/components/SubscribeButton";
 
 type StickyEnrollBarProps = {
   onCTAClick?: () => void;
@@ -30,11 +30,15 @@ export default function StickyEnrollBar({
   const [now, setNow] = useState(Date.now());
   const intervalRef = useRef<number | null>(null);
 
+  const scrollToRegister = () => {
+    const el = document.getElementById("register");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   // Set or restore timer
   const deadline = useMemo(() => {
     if (targetTimestampMs) return targetTimestampMs;
-    const existing = localStorage.getItem(storageKey);
-    if (existing) return parseInt(existing, 10);
+    // Always restart timer on page refresh
     const newDeadline = Date.now() + 15 * 60 * 1000;
     localStorage.setItem(storageKey, String(newDeadline));
     return newDeadline;
@@ -89,19 +93,19 @@ export default function StickyEnrollBar({
 
               {/* Right: CTA Button */}
               <div className="flex items-center gap-2 sm:gap-3 ml-auto">
-                <Button
-                  onClick={() => {
-  window.open("https://rzp.io/rzp/yfk410Ud", "_self");
-}}
+                <SubscribeButton
+                  label="Join now for"
+                  price="₹99"
+                  ctaLocation="sticky-enroll-bar"
+                  href="#register"
+                  onClick={scrollToRegister}
                   className="
                     h-10 sm:h-11 px-4 sm:px-6 rounded-full
                     font-montserrat font-bold text-sm sm:text-base
                     bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70
-                    text-white shadow-lg hover:shadow-xl transition
+                    text-white shadow-lg hover:shadow-xl transition inline-flex items-center justify-center gap-1
                   "
-                >
-                  Join now for ₹99
-                </Button>
+                />
 
                 {/* Dismiss Icon */}
                 <button

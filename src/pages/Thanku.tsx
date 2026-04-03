@@ -1,27 +1,71 @@
+import { useEffect, useState } from 'react';
 import { motion } from "framer-motion";
-import { useRef } from "react";
-import { CheckCircle2, MessageCircle } from "lucide-react";
+import { CheckCircle2, MessageCircle, Loader2 } from "lucide-react";
+import { trackPurchase } from "@/utils/gtm";
 import { useFacebookPixel } from "@/hooks/useFacebookPixel";
+import { 
+  DISCOUNTED_PRICE, 
+  ORDER, 
+  PRODUCT,
+  WEBINAR_NAME 
+} from "@/utils/product-info";
 
-const WA_GROUP_LINK = "http://join.digitalwealthdomination.in/dwd-whatsapp";
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTNbThNq5PaLsO8hgj4EIb5CTjMp8-kOOI9jpi18eTL-p9v5vh-QeOSOeqaozauJOAy2fs5mOQIhk4G/pub?output=csv";
 
 const ThankYou = () => {
-  const fired = useRef(false);
+  const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
 
-  // ✅ PageView (both pixels)
-  useFacebookPixel();
-
-  // ✅ Purchase (ONLY one pixel)
+  /* 🔥 FACEBOOK PIXEL TRACKING (Optional/Commented) */
+  /*
   useFacebookPixel({
     eventName: "Purchase",
     eventParams: {
-      value: 99,
+      value: DISCOUNTED_PRICE,
       currency: "INR",
-      content_name: "Workshop Registration",
+      content_name: WEBINAR_NAME,
       content_type: "product",
     },
     pixelId: "1953633955426093",
   });
+  */
+
+  /* ✅ GTM PURCHASE TRACKING (With Refresh Protection) */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const paymentId = params.get("payment_id") || params.get("razorpay_payment_id");
+
+    if (paymentId) {
+      const alreadyTracked = localStorage.getItem(`tracked_${paymentId}`);
+      if (alreadyTracked) return;
+      
+      localStorage.setItem(`tracked_${paymentId}`, "true");
+    }
+
+    trackPurchase({
+      ...ORDER,
+      transaction_id: paymentId || `txn_${Date.now()}`,
+    });
+  }, []);
+
+  /* ✅ FETCH WHATSAPP LINK FROM GOOGLE SHEET */
+  useEffect(() => {
+    fetch(CSV_URL)
+      .then((res) => res.text())
+      .then((text) => {
+        const rows = text.trim().split('\n');
+        if (rows.length > 1) {
+          const values = rows[1].split(',');
+          // Column index 2 is the whatsapp_link
+          const link = values[2] ? values[2].trim().replace(/^"|"$/g, '') : '';
+          setWhatsappLink(link);
+        }
+      })
+      .catch((err) => {
+        console.error('CSV fetch error:', err);
+        // Fallback link if CSV fails
+        setWhatsappLink("https://wa.me/your_fallback_link");
+      });
+  }, []);
 
   return (
     <section className="min-h-screen flex items-center justify-center bg-gradient-to-b from-noir via-primary/80 to-noir px-4 py-16">
@@ -44,32 +88,49 @@ const ThankYou = () => {
         </motion.div>
 
         <h1 className="font-montserrat font-bold text-3xl sm:text-4xl text-white mb-3">
-          Thank You For Registering!
+          Registration Confirmed! 🎉
         </h1>
 
         <p className="font-poppins text-base sm:text-lg text-white/90 leading-relaxed mb-6">
           <span className="text-red-400 font-semibold">
-            Wait, your registration is incomplete...
+            Action Required:
           </span>{" "}
-          Join the WhatsApp group below to receive updates, reminders, and
-          access details for the{" "}
+          Join the official WhatsApp group to receive session links and important updates for the{" "}
           <span className="text-accent font-semibold">
-            Digital Wealth Domination Workshop
-          </span>
-          .
+            {WEBINAR_NAME}
+          </span>.
         </p>
 
-        <motion.a
-          href={WA_GROUP_LINK}
-          target="_self"
-          rel="noopener noreferrer"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-accent to-accent/80 text-white font-montserrat font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-        >
-          <MessageCircle className="w-5 h-5" />
-          Join WhatsApp Group
-        </motion.a>
+        {/* WhatsApp CTA with Loading State */}
+        {whatsappLink ? (
+          <motion.a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-montserrat font-bold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 w-full justify-center sm:w-auto"
+          >
+            <MessageCircle className="w-6 h-6" />
+            Join WhatsApp Group Now
+          </motion.a>
+        ) : (
+          <div className="inline-flex items-center gap-2 bg-white/10 text-white/50 font-montserrat font-bold px-8 py-4 rounded-full w-full justify-center sm:w-auto cursor-not-allowed">
+            <Loader2 className="w-5 h-5 animate-spin" />
+            Fetching Group Link...
+          </div>
+        )}
+
+        <div className="mt-8 bg-white/5 border border-white/10 rounded-2xl p-4 text-left">
+          <p className="text-xs sm:text-sm text-white/70 leading-relaxed">
+            ⚠️ <strong>IMPORTANT:</strong><br />
+            Live session links aur bonuses sirf group par share kiye jayenge. Group miss na karein.
+          </p>
+        </div>
+
+        <p className="text-white/50 text-xs mt-6 font-poppins">
+          ⏰ Important: Join immediately to avoid missing session links.
+        </p>
       </motion.div>
     </section>
   );

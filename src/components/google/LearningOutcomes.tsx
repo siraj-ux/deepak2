@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Video, MessageCircle, FileText, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import SubscribeButton from "@/components/SubscribeButton";
 
 const outcomes = [
   { icon: Video, title: "Live Zoom Sessions", description: "This 2-day workshop is packed with in-depth training, technical demonstrations, and practical exercises.", value: "Worth Rs. 17,997" },
@@ -44,6 +44,11 @@ const LearningOutcomes = () => {
   const prefersReducedMotion = useReducedMotion();
   const initial = prefersReducedMotion ? {} : { opacity: 0, y: 22 };
   const animate = prefersReducedMotion ? {} : { opacity: 1, y: 0 };
+
+  const scrollToRegister = () => {
+    const el = document.getElementById("register");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-background to-muted/10">
@@ -192,18 +197,18 @@ const LearningOutcomes = () => {
           transition={{ duration: 0.5 }}
           className="text-center space-y-3 sm:space-y-4"
         >
-          <Button
-            onClick={() => {
-              window.open("https://rzp.io/rzp/yfk410Ud", "_self");
-            }}
+          <SubscribeButton
+            label="Join now for"
+            price="₹99"
+            ctaLocation="learning-outcomes"
+            href="#register"
+            onClick={scrollToRegister}
             className="h-12 sm:h-14 px-8 sm:px-12 text-base sm:text-lg font-montserrat font-bold
                        bg-gradient-to-r from-accent to-accent/80
                        hover:from-accent/90 hover:to-accent/70
                        text-white rounded-full shadow-lg hover:shadow-xl
-                       transition-all duration-300"
-          >
-            Join now for ₹99
-          </Button>
+                       transition-all duration-300 inline-flex items-center justify-center gap-2"
+          />
 
           <p className="font-poppins text-[13px] sm:text-sm font-bold text-accent">
             Claim FREE bonuses worth ₹29,997

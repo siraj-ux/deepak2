@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { XCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// 1. Import the SubscribeButton
+import SubscribeButton from "@/components/SubscribeButton";
 
 const reasons = [
   "You are not willing to put in the time and effort to learn about blockchain technology and implement the strategies taught in the workshop.",
@@ -18,18 +19,18 @@ const DontJoinIf = () => {
     else window.location.hash = "#register";
   };
 
-  const handleCTAClick = () => {
-    // Track AddToCart event
-    if (window.fbq) {
-      window.fbq("track", "AddToCart", {
-        value: 99,
-        currency: "INR",
-        content_name: "Workshop Registration",
-        content_type: "product",
-      });
-    }
-    scrollToRegister();
-  };
+  // const handleCTAClick = () => {
+  //   // Keep your FB tracking logic
+  //   if (window.fbq) {
+  //     window.fbq("track", "AddToCart", {
+  //       value: 99,
+  //       currency: "INR",
+  //       content_name: "Workshop Registration",
+  //       content_type: "product",
+  //     });
+  //   }
+  //   scrollToRegister();
+  // };
 
   const prefersReducedMotion = useReducedMotion();
   const initial = prefersReducedMotion ? {} : { opacity: 0, y: 18 };
@@ -52,8 +53,8 @@ const DontJoinIf = () => {
           <div className="w-24 h-1 bg-gradient-to-r from-destructive to-destructive/60 mx-auto rounded-full" />
         </motion.div>
 
-        {/* Cards: compact & 2 columns on mobile */}
-        <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-5 mb-8 sm:mb-10">
+        {/* Cards */}
+        <div className="max-w-6xl mx-auto grid grid-cols-2 gap-3 sm:gap-4 md:gap-5 mb-8 sm:mb-10">
           {reasons.slice(0, 4).map((reason, index) => (
             <motion.div
               key={index}
@@ -73,7 +74,7 @@ const DontJoinIf = () => {
           ))}
         </div>
 
-        {/* Highlight row: spans both columns but still compact */}
+        {/* Highlight row */}
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -91,24 +92,27 @@ const DontJoinIf = () => {
           </div>
         </motion.div>
 
-        {/* CTA (bonus outside the button) */}
+        {/* CTA */}
         <motion.div
           initial={initial}
           whileInView={animate}
           viewport={{ once: true }}
           transition={{ duration: 0.45 }}
-          className="text-center space-y-3 sm:space-y-4 mt-8 sm:mt-10"
+          className="text-center space-y-3 sm:space-y-4 mt-8 sm:mt-10 flex flex-col items-center"
         >
-          <Button
-            onClick={handleCTAClick}
+          {/* ✅ UPDATED: Replaced Button with SubscribeButton */}
+          <SubscribeButton
+            label="Join now for ₹99"
+            price="₹99"
+            ctaLocation="dont-join-if-section"
+            href="#register"
+           
             className="h-12 sm:h-14 px-8 sm:px-12 text-base sm:text-lg font-montserrat font-bold
                        bg-gradient-to-r from-accent to-accent/80
                        hover:from-accent/90 hover:to-accent/70
                        text-white rounded-full shadow-lg hover:shadow-xl
-                       transition-all duration-300"
-          >
-            Join now for ₹99
-          </Button>
+                       transition-all duration-300 inline-flex items-center justify-center gap-2"
+          />
 
           <p className="font-poppins text-[13px] sm:text-sm font-bold text-accent">
             Claim FREE bonuses worth ₹29,997

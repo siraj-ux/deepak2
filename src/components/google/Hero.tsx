@@ -3,6 +3,11 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Calendar, Clock, Globe, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/coachbg.webp";
+import SubscribeButton from "@/components/SubscribeButton";
+import RegistrationForm from "@/components/google/RegistrationForm"; // Import the new form
+
+/** For TS: declare fbq on window */
+declare global { interface Window { fbq?: (...args: any[]) => void; } }
 
 /** CSV endpoint for gid=0 */
 const SHEET_CSV_URL =
@@ -64,8 +69,13 @@ const Hero = () => {
   const initialLeft = prefersReducedMotion ? {} : { opacity: 0, x: -24 };
   const initialRight = prefersReducedMotion ? {} : { opacity: 0, x: 24 };
 
-  const [dateText, setDateText] = useState("Loading…");
-  const [timeText, setTimeText] = useState("Loading…");
+  const [dateText, setDateText] = useState("Date TBA");
+  const [timeText, setTimeText] = useState("Time TBA");
+
+  const scrollToRegister = () => {
+    const el = document.getElementById("register");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -226,24 +236,23 @@ const Hero = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2 text-center">
-                  <Button
-                    onClick={() => {
-                      window.open("https://rzp.io/rzp/yfk410Ud", "_self");
-                    }}
-                    className="w-full h-12 sm:h-14 text-base sm:text-lg font-montserrat font-bold
-                               bg-gradient-to-r from-accent to-accent/80
-                               hover:from-accent/90 hover:to-accent/70
-                               text-white rounded-full shadow-lg hover:shadow-xl
-                               transition-all duration-300"
-                  >
-                    Join now for ₹99
-                  </Button>
-
+                {/* GTM-Ready CTA */}
+                <div className="space-y-2 text-center flex flex-col items-center">
+                  <SubscribeButton
+                    label="Join now for"
+                    price="₹99"
+                    ctaLocation="hero-section"
+                    href="#register"
+                    onClick={scrollToRegister}
+                    className="w-full h-12 sm:h-14 text-base sm:text-lg font-montserrat font-bold bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center justify-center gap-2"
+                  />
                   <p className="font-poppins text-[13px] sm:text-sm font-bold text-accent mt-2">
                     Claim FREE bonuses worth ₹29,997
                   </p>
                 </div>
+
+                {/* Separate Registration Form Component */}
+                <RegistrationForm />
 
                 <p className="text-center font-poppins text-xs sm:text-sm">
                   Enrollment closes on <span className="text-accent font-semibold">today</span>

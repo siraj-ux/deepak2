@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { usePageViewGTM } from "./hooks/use-pageview-gtm";
 
 const Index = lazy(() => import("./pages/Index"));
 const IndexGa = lazy(() => import("./pages/IndexGa"));
@@ -13,12 +14,21 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
+// Helper component to trigger GTM on route changes
+const GTMTracker = () => {
+  usePageViewGTM();
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        {/* ✅ GTM Tracker added here inside BrowserRouter */}
+        <GTMTracker />
+        
         <Suspense
           fallback={
             <div className="min-h-screen flex items-center justify-center bg-black/90 text-white">

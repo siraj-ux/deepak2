@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// 1. Import the SubscribeButton (adjust the path if necessary)
+import SubscribeButton from "@/components/SubscribeButton"; 
 
 const workshopTopics = [
   { title: "Crypto Investing Essentials:", description: "Gain practical skills to start investing in crypto and begin your journey towards digital wealth." },
@@ -68,22 +69,23 @@ const WorkshopContent = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center space-y-3 sm:space-y-4"
+          className="text-center space-y-3 sm:space-y-4 flex flex-col items-center"
         >
-          <Button
-          onClick={() => {
-  scrollToRegister();
-}}
+          {/* ✅ UPDATED: Replaced Button with SubscribeButton */}
+          <SubscribeButton
+            label="Join now for ₹99"
+            price="₹99"
+            ctaLocation="workshop-content-section"
+            href="#register"
+            onClick={scrollToRegister}
             className="h-12 sm:h-14 px-8 sm:px-12 text-base sm:text-lg font-montserrat font-bold
                        bg-gradient-to-r from-accent to-accent/80
                        hover:from-accent/90 hover:to-accent/70
                        text-white rounded-full shadow-lg hover:shadow-xl
-                       transition-all duration-300"
-          >
-            Join now for ₹99
-          </Button>
+                       transition-all duration-300 inline-flex items-center justify-center gap-2"
+          />
 
-          {/* Bonus line outside the button (like Hero) */}
+          {/* Bonus line outside the button */}
           <p className="font-poppins text-[13px] sm:text-sm font-bold text-accent">
             Claim FREE bonuses worth ₹29,997
           </p>
@@ -96,13 +98,10 @@ const WorkshopContent = () => {
         {/* Stylish section separator */}
         <div className="mt-10 sm:mt-12 md:mt-16">
           <div className="relative h-10">
-            {/* subtle glow blur */}
             <div className="absolute inset-x-10 sm:inset-x-20 mx-auto -top-2 h-8 blur-2xl bg-gradient-to-r from-accent/20 via-secondary/20 to-accent/20 rounded-full pointer-events-none" />
-            {/* main line */}
             <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2">
               <div className="mx-auto w-3/4 sm:w-2/3 md:w-1/2 h-px bg-gradient-to-r from-transparent via-foreground/20 to-transparent" />
             </div>
-            {/* small accent dot */}
             <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-gradient-to-r from-accent to-secondary shadow" />
           </div>
         </div>
