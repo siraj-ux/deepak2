@@ -79,7 +79,7 @@ const Index = () => {
           <FAQSection />
           <SiteFooter />
 
-          <StickyEnrollBar />
+          {/* <StickyEnrollBar /> */}
         </Suspense>
       )}
     </main>

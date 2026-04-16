@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Calendar, Clock, Globe, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -62,6 +62,16 @@ function parseCsv(text: string): string[][] {
   return rows;
 }
 
+// Timer Helper
+function formatTime(msLeft: number) {
+  if (msLeft < 0) msLeft = 0;
+  const totalSec = Math.floor(msLeft / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
 const Hero = () => {
   const prefersReducedMotion = useReducedMotion();
   const animateFromLeft = prefersReducedMotion ? {} : { opacity: 1, x: 0 };
@@ -71,6 +81,18 @@ const Hero = () => {
 
   const [dateText, setDateText] = useState("Date TBA");
   const [timeText, setTimeText] = useState("Time TBA");
+
+  // Timer Logic
+  const [now, setNow] = useState(Date.now());
+  const intervalRef = useRef<number | null>(null);
+  const deadline = useMemo(() => Date.now() + 15 * 60 * 1000, []); // 15 Minute Timer
+
+  useEffect(() => {
+    intervalRef.current = window.setInterval(() => setNow(Date.now()), 1000) as unknown as number;
+    return () => intervalRef.current && window.clearInterval(intervalRef.current);
+  }, []);
+
+  const msLeft = Math.max(0, deadline - now);
 
   const scrollToRegister = () => {
     const el = document.getElementById("register");
@@ -249,6 +271,25 @@ const Hero = () => {
                   <p className="font-poppins text-[13px] sm:text-sm font-bold text-accent mt-2">
                     Claim FREE bonuses worth ₹29,997
                   </p>
+                </div>
+
+                {/* --- TIMER & URGENCY SECTION (RED) --- */}
+                <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-3.5 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-destructive"></span>
+                    </div>
+                    <p className="font-poppins text-[13px] sm:text-sm font-bold text-destructive">
+                      Seats filling fast!
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] uppercase font-bold text-destructive/60 leading-none mb-1">Offer Ends In</span>
+                    <span className="font-montserrat font-bold text-sm sm:text-lg text-destructive tabular-nums leading-none">
+                      {formatTime(msLeft)}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Separate Registration Form Component */}

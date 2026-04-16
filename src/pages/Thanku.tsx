@@ -1,34 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { motion } from "framer-motion";
-import { CheckCircle2, MessageCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, MessageCircle } from "lucide-react";
 import { trackPurchase } from "@/utils/gtm";
-import { useFacebookPixel } from "@/hooks/useFacebookPixel";
 import { 
-  DISCOUNTED_PRICE, 
   ORDER, 
-  PRODUCT,
   WEBINAR_NAME 
 } from "@/utils/product-info";
 
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTNbThNq5PaLsO8hgj4EIb5CTjMp8-kOOI9jpi18eTL-p9v5vh-QeOSOeqaozauJOAy2fs5mOQIhk4G/pub?output=csv";
+// Static WhatsApp Link
+const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/IRTf9ewumo67hbkhYIMHXF";
 
 const ThankYou = () => {
-  const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
-
-  /* 🔥 FACEBOOK PIXEL TRACKING (Optional/Commented) */
-  /*
-  useFacebookPixel({
-    eventName: "Purchase",
-    eventParams: {
-      value: DISCOUNTED_PRICE,
-      currency: "INR",
-      content_name: WEBINAR_NAME,
-      content_type: "product",
-    },
-    pixelId: "1953633955426093",
-  });
-  */
-
   /* ✅ GTM PURCHASE TRACKING (With Refresh Protection) */
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -45,26 +27,6 @@ const ThankYou = () => {
       ...ORDER,
       transaction_id: paymentId || `txn_${Date.now()}`,
     });
-  }, []);
-
-  /* ✅ FETCH WHATSAPP LINK FROM GOOGLE SHEET */
-  useEffect(() => {
-    fetch(CSV_URL)
-      .then((res) => res.text())
-      .then((text) => {
-        const rows = text.trim().split('\n');
-        if (rows.length > 1) {
-          const values = rows[1].split(',');
-          // Column index 2 is the whatsapp_link
-          const link = values[2] ? values[2].trim().replace(/^"|"$/g, '') : '';
-          setWhatsappLink(link);
-        }
-      })
-      .catch((err) => {
-        console.error('CSV fetch error:', err);
-        // Fallback link if CSV fails
-        setWhatsappLink("https://wa.me/your_fallback_link");
-      });
   }, []);
 
   return (
@@ -101,25 +63,18 @@ const ThankYou = () => {
           </span>.
         </p>
 
-        {/* WhatsApp CTA with Loading State */}
-        {whatsappLink ? (
-          <motion.a
-            href={whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-montserrat font-bold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 w-full justify-center sm:w-auto"
-          >
-            <MessageCircle className="w-6 h-6" />
-            Join WhatsApp Group Now
-          </motion.a>
-        ) : (
-          <div className="inline-flex items-center gap-2 bg-white/10 text-white/50 font-montserrat font-bold px-8 py-4 rounded-full w-full justify-center sm:w-auto cursor-not-allowed">
-            <Loader2 className="w-5 h-5 animate-spin" />
-            Fetching Group Link...
-          </div>
-        )}
+        {/* WhatsApp CTA */}
+        <motion.a
+          href={WHATSAPP_GROUP_LINK}
+          target="_blank"
+          rel="noopener noreferrer"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-montserrat font-bold px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 w-full justify-center sm:w-auto"
+        >
+          <MessageCircle className="w-6 h-6" />
+          Join WhatsApp Group Now
+        </motion.a>
 
         <div className="mt-8 bg-white/5 border border-white/10 rounded-2xl p-4 text-left">
           <p className="text-xs sm:text-sm text-white/70 leading-relaxed">

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRazorpay } from "@/hooks/useRazorpay";
+import { useGoogleSheet } from "@/hooks/useGoogleSheet";
 
 // GTM & Product Imports
 import { 
@@ -35,7 +36,7 @@ function getUTMs() {
     utm_campaign: params.get("utm_campaign") || "",
     utm_content: params.get("utm_content") || "",
     utm_term: params.get("utm_term") || "",
-    fclid: params.get("fclid") || "",
+    fbclid: params.get("fbclid") || "",
   };
   const saved = localStorage.getItem(UTM_KEY);
   if (!saved && Object.values(fromUrl).some(v => !!v)) {
@@ -49,12 +50,13 @@ function getUTMs() {
       utm_campaign: fromUrl.utm_campaign || stored.utm_campaign || "",
       utm_content: fromUrl.utm_content || stored.utm_content || "",
       utm_term: fromUrl.utm_term || stored.utm_term || "",
-      fclid: fromUrl.fclid || stored.fclid || "",
+      fbclid: fromUrl.fbclid || stored.fbclid || "",
     };
   } catch { return fromUrl; }
 }
 
 const RegistrationForm = () => {
+  const { sendToGoogleSheet } = useGoogleSheet();
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", profession: "" });
   
@@ -101,7 +103,20 @@ const RegistrationForm = () => {
     } catch (err) {
       console.error("Webhook failed", err);
     }
-
+    await sendToGoogleSheet({
+          fullName: form.name,
+          email: form.email,
+          phone: form.phone,
+          profession: form.profession,
+    
+          ...utms, // ✅ short & clean
+    
+          workshop: WEBINAR_NAME,
+          price: DISCOUNTED_PRICE,
+          page_url: window.location.href,
+          submitted_at: new Date().toISOString(),
+        });
+        
     // 4. Initiate Local Razorpay Checkout
     try {
       const result = await initiatePayment({

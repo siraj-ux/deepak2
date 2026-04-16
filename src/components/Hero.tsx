@@ -1,18 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Calendar, Clock, Globe, Gift } from "lucide-react";
+import { Calendar, Clock, Globe, Gift, AlertCircle } from "lucide-react";
 import SubscribeButton from "@/components/SubscribeButton";
-import RegistrationForm from "@/components/RegistrationForm"; // Import the new form
-
+import RegistrationForm from "@/components/RegistrationForm";
 /** For TS: declare fbq on window */
 // declare global { interface Window { fbq?: (...args: any[]) => void; } }
-
 const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRBEUzUQQ_karr8w7rEIXcrHK9Gei6cz8medP-8vct1T48Lzx1l3Jg0kJGTLL6myJyR9EaevuPKlp1s/pub?gid=0&single=true&output=csv";
+
+// Helper for Timer
+function formatTime(msLeft: number) {
+  if (msLeft < 0) msLeft = 0;
+  const totalSec = Math.floor(msLeft / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
 
 const Hero = () => {
   const prefersReducedMotion = useReducedMotion();
   const [dateText, setDateText] = useState("Date TBA");
   const [timeText, setTimeText] = useState("Time TBA");
+  
+  // --- Timer Logic ---
+  const [now, setNow] = useState(Date.now());
+  const intervalRef = useRef<number | null>(null);
+  
+  const deadline = useMemo(() => {
+    return Date.now() + 15 * 60 * 1000; // 15 Minute Countdown
+  }, []);
+
+  useEffect(() => {
+    intervalRef.current = window.setInterval(() => setNow(Date.now()), 1000) as unknown as number;
+    return () => intervalRef.current && window.clearInterval(intervalRef.current);
+  }, []);
+
+  const msLeft = Math.max(0, deadline - now);
+  // -------------------
 
   useEffect(() => {
     const loadDateTime = async () => {
@@ -122,6 +146,26 @@ const Hero = () => {
                   />
                   <p className="font-poppins text-[13px] sm:text-sm font-bold text-accent mt-2">Claim FREE bonuses worth ₹29,997</p>
                 </div>
+
+                {/* --- TIMER SECTION (RED URGENCY) --- */}
+                <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-destructive"></span>
+                    </div>
+                    <p className="font-poppins text-xs sm:text-sm font-bold text-destructive">
+                      Seats are filling fast!
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] uppercase tracking-wider font-bold text-destructive/60">Ends In</span>
+                    <span className="font-montserrat font-bold text-sm sm:text-base text-destructive tabular-nums">
+                      {formatTime(msLeft)}
+                    </span>
+                  </div>
+                </div>
+                {/* ------------------------- */}
 
                 {/* Separate Registration Form Component */}
                 <RegistrationForm />

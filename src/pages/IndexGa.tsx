@@ -71,7 +71,7 @@ export default function IndexGa() {
       </Suspense>
 
       {/* Sticky CTA: keep eager so user always sees it quickly */}
-      <StickyEnrollBar />
+      {/* <StickyEnrollBar /> */}
     </main>
   );
 }
